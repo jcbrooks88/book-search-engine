@@ -1,24 +1,37 @@
 import express from 'express';
+import path from 'node:path';
+import dotenv from 'dotenv';
+import db from './config/connection.js';
+import routes from './routes/index.js';
+
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
+import { typeDefs } from './schemas/typeDefs.js';
+import { resolvers } from './schemas/resolvers.js';
+import { getUserFromToken } from './auth.js';
 import { json } from 'body-parser';
-import { getUserFromToken } from './services/auth';
-import typeDefs from './schema/typeDefs'; // Add this line to import typeDefs
-import resolvers from './resolvers'; // Add this line to import resolvers
+
+dotenv.config();
 
 const app = express();
+const PORT = process.env.PORT || 3001;
 
-const server = new ApolloServer({
+// Apollo Server setup
+const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
 });
 
-await server.start();
+await apolloServer.start();
 
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+// Apply Apollo Server middleware
 app.use(
   '/graphql',
   json(),
-  expressMiddleware(server, {
+  expressMiddleware(apolloServer, {
     context: async ({ req }) => {
       const authHeader = req.headers.authorization;
       const user = getUserFromToken(authHeader);
@@ -27,6 +40,19 @@ app.use(
   })
 );
 
-app.listen(4000, () => {
-  console.log('🚀 Server running at http://localhost:4000/graphql');
+// Serve static assets if in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../client/build')));
+}
+
+// RESTful API routes
+app.use(routes);
+
+// Start server
+db.once('open', () => {
+  app.listen(PORT, () => {
+    console.log(`🌍 Now listening on localhost:${PORT}`);
+    console.log(`🚀 GraphQL available at http://localhost:${PORT}/graphql`);
+  });
 });
+
