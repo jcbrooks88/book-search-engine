@@ -1,13 +1,14 @@
 {
-  "extends": "../tsconfig.json",
+  "extends": "../tsconfig.json",  // Inherit from the main tsconfig.json
   "compilerOptions": {
-    /* Modules */
-    "rootDir": "src" /* Specify the root folder within your source files. */,
-
-    /* Emit */
-    "outDir": "dist" /* Specify an output folder for all emitted files. */
-    // "noEmitOnError": true /* Disable emitting files if any type checking errors are reported. */
+    "rootDir": "src",            // The root directory for your server code
+    "outDir": "dist",            // The output directory for compiled files
+    "esModuleInterop": true,     // Compatibility with CommonJS modules
+    "module": "ESNext",          // Use ESNext module system
+    "moduleResolution": "node",  // Resolve modules like Node.js does
+    "target": "ES2020",          // JavaScript version for emitted code
+    "skipLibCheck": true         // Skip type declaration checks for third-party libraries
   },
-  "include": ["src"],
-  "typeRoots": ["./node_modules/@types", "./src/types"]
+  "include": ["src"],  // Include all files inside the src folder
+  "exclude": ["node_modules"]  // Optionally exclude node_modules if not needed
 }

@@ -1,58 +1,74 @@
 import express from 'express';
 import path from 'node:path';
 import dotenv from 'dotenv';
-import db from './config/connection.js';
 import routes from './routes/index.js';
 
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { typeDefs } from './schemas/typeDefs.js';
 import { resolvers } from './schemas/resolvers.js';
-import { getUserFromToken } from './auth.js';
-import { json } from 'body-parser';
+import { getUserFromToken } from './services/auth.js';
+
+import bodyParser from 'body-parser';
+const { json } = bodyParser;
+
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Apollo Server setup
-const apolloServer = new ApolloServer({
-  typeDefs,
-  resolvers,
-});
+console.log("🚀 Starting server initialization...");
 
-await apolloServer.start();
+async function startServer() {
+  try {
+    console.log("🚀 Initializing Apollo Server...");
+    const apolloServer = new ApolloServer({
+      typeDefs,
+      resolvers,
+    });
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+    console.log("🔄 Starting Apollo Server...");
+    await apolloServer.start();
+    console.log("✅ Apollo Server started!");
 
-// Apply Apollo Server middleware
-app.use(
-  '/graphql',
-  json(),
-  expressMiddleware(apolloServer, {
-    context: async ({ req }) => {
-      const authHeader = req.headers.authorization;
-      const user = getUserFromToken(authHeader);
-      return { user };
-    },
-  })
-);
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
 
-// Serve static assets if in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../client/build')));
+    console.log("🔄 Applying Apollo middleware...");
+    app.use(
+      '/graphql',
+      json(),
+      expressMiddleware(apolloServer, {
+        context: async ({ req }) => {
+          console.log("🛂 Checking user authentication...");
+          const authHeader = req.headers.authorization;
+          return { user: getUserFromToken(authHeader) };
+        },
+      })
+    );
+    console.log("✅ Apollo middleware applied!");
+
+    if (process.env.NODE_ENV === 'production') {
+      console.log("📁 Serving static files...");
+      app.use(express.static(path.join(__dirname, '../client/build')));
+    }
+
+    app.use(routes);
+    console.log("✅ Routes loaded!");
+
+
+      app.listen(PORT, () => {
+        console.log(`🌍 Server running at http://localhost:${PORT}`);
+        console.log(`🚀 GraphQL available at http://localhost:${PORT}/graphql`);
+      });
+      
+  } catch (error) {
+    console.error("❌ Fatal error during startup:", error);
+    process.exit(1);
+  }
 }
 
-// RESTful API routes
-app.use(routes);
-
-// Start server
-db.once('open', () => {
-  app.listen(PORT, () => {
-    console.log(`🌍 Now listening on localhost:${PORT}`);
-    console.log(`🚀 GraphQL available at http://localhost:${PORT}/graphql`);
-  });
+startServer().catch((error) => {
+  console.error("❌ Uncaught error:", error);
 });
-
