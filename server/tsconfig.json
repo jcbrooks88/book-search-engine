@@ -9,7 +9,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
-    "types": ["@types/node", "@types/bcrypt", "@types/jsonwebtoken"]
+    "types": ["bcrypt", "jsonwebtoken"]
   },
   "include": ["src"]
 }
