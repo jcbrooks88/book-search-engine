@@ -10,5 +10,5 @@
     "skipLibCheck": true         // Skip type declaration checks for third-party libraries
   },
   "include": ["src"],  // Include all files inside the src folder
-  "exclude": ["node_modules"]  // Optionally exclude node_modules if not needed
+ 
 }
