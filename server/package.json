@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
-    "watch": "concurrently \"tsc -w\" \"nodemon dist/server.js\"",
+    "watch": "concurrently \"tsc -w\" \"nodemon dist/server.js\""
     
   },
   "dependencies": {
