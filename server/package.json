@@ -8,7 +8,7 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "watch": "concurrently \"tsc -w\" \"nodemon dist/server.js\"",
-    "prepare": "npm install"
+    
   },
   "dependencies": {
     "@apollo/server": "^4.11.3",
