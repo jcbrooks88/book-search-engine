@@ -1,4 +1,4 @@
-import { gql } from 'apollo-server-express';
+import gql from 'graphql-tag';
 
 // Define the Book Input type for passing parameters when saving a book
 const bookInputType = gql`
