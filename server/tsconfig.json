@@ -1,15 +1,15 @@
 {
-  "extends": "../tsconfig.json",  // Inherit from the main tsconfig.json
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "rootDir": "src",            // The root directory for your server code
-    "outDir": "dist",            // The output directory for compiled files
-    "esModuleInterop": true,     // Compatibility with CommonJS modules
-    "module": "ESNext",          // Use ESNext module system
-    "moduleResolution": "node",  // Resolve modules like Node.js does
-    "target": "ES2020",          // JavaScript version for emitted code
+    "rootDir": "src",
+    "outDir": "dist",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ES2020",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
-    "typeRoots": ["./node_modules/@types"]         // Skip type declaration checks for third-party libraries
+    "types": ["@types/node", "@types/bcrypt", "@types/jsonwebtoken"]
   },
-  "include": ["src"],  // Include all files inside the src folder
- 
+  "include": ["src"]
 }
