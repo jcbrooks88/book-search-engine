@@ -7,7 +7,8 @@
     "module": "ESNext",          // Use ESNext module system
     "moduleResolution": "node",  // Resolve modules like Node.js does
     "target": "ES2020",          // JavaScript version for emitted code
-    "skipLibCheck": true         // Skip type declaration checks for third-party libraries
+    "skipLibCheck": true,
+    "typeRoots": ["./node_modules/@types"]         // Skip type declaration checks for third-party libraries
   },
   "include": ["src"],  // Include all files inside the src folder
  
