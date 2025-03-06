@@ -9,9 +9,9 @@ import { typeDefs } from './schemas/typeDefs.js';
 import { resolvers } from './schemas/resolvers.js';
 import { getUserFromToken } from './services/auth.js';
 import bodyParser from 'body-parser';
-const { json } = bodyParser;
 
-import userRoutes from './routes/api/user-routes.js'; // Add this import
+const { json } = bodyParser;
+import userRoutes from './routes/api/user-routes.js';
 
 dotenv.config();
 
@@ -50,16 +50,16 @@ async function startServer() {
     );
     console.log("✅ Apollo middleware applied!");
 
-    // Get the __dirname equivalent
+    // Get the __dirname equivalent in ES Modules
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
     if (process.env.NODE_ENV === 'production') {
       console.log("📁 Serving static files...");
-      app.use(express.static(path.join(__dirname, '../client/build')));
+      app.use(express.static(path.join(__dirname, '../client/dist')));
     }
 
     // Add the route middleware for user-related routes
-    app.use('/api/users', userRoutes); // Here it goes!
+    app.use('/api/users', userRoutes);
 
     console.log("✅ Routes loaded!");
 
@@ -67,7 +67,7 @@ async function startServer() {
       console.log(`🌍 Server running at http://localhost:${PORT}`);
       console.log(`🚀 GraphQL available at http://localhost:${PORT}/graphql`);
     });
-      
+
   } catch (error) {
     console.error("❌ Fatal error during startup:", error);
     process.exit(1);
@@ -78,5 +78,5 @@ startServer().catch((error) => {
   console.error("❌ Uncaught error:", error);
 });
 
-console.log("Starting server... File path:", __dirname);
-
+// Moved __dirname log inside the function after defining it
+console.log("Starting server... File path:", path.dirname(fileURLToPath(import.meta.url)));
