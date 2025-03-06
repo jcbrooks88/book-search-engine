@@ -3,7 +3,7 @@ import { setContext } from '@apollo/client/link/context';
 
 // Define the GraphQL server endpoint
 const httpLink = createHttpLink({
-  uri: 'http://localhost:4000/graphql', // Update this if your backend runs elsewhere
+  uri: import.meta.env.VITE_GRAPHQL_URI, // This will fetch from the environment variable
 });
 
 // Middleware to attach auth token to requests
@@ -12,15 +12,15 @@ const authLink = setContext((_, { headers }) => {
   return {
     headers: {
       ...headers,
-      authorization: token ? `Bearer ${token}` : '',
+      authorization: token ? `Bearer ${token}` : '', // Attach token if available
     },
   };
 });
 
 // Create Apollo Client instance
 const client = new ApolloClient({
-  link: authLink.concat(httpLink),
-  cache: new InMemoryCache(),
+  link: authLink.concat(httpLink), // Concatenate auth middleware with the HTTP link
+  cache: new InMemoryCache(), // Use InMemoryCache for caching GraphQL queries
 });
 
 export default client;

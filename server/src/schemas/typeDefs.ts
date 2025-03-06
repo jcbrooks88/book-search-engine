@@ -36,30 +36,25 @@ export const typeDefs = gql`
     user: User!
   }
 
-  # Query type
-type Query {
-  # Returns the current authenticated user
-  me: User
+  type Query {
+    # Returns the current authenticated user
+    me: User
+    # Fetch a single user by ID or username
+    getSingleUser(userId: ID, username: String): User
+    # Fetch a book by ID
+    getBookById(bookId: String!): Book
+  }
 
-  # Fetch a single user by ID or username
-  getSingleUser(userId: ID, username: String): User
-}
+  type Mutation {
+    # Login a user, returning the token and user information
+    login(email: String!, password: String!): Auth
+    # Register a new user and return the token and user information
+    addUser(username: String!, email: String!, password: String!): Auth
+    # Save a book to the user's savedBooks list and return the updated User
+    saveBook(bookData: BookInput!): User
+    # Remove a book from the user's savedBooks list and return the updated User
+    removeBook(bookId: String!): User
+  }
 
-type Mutation {
-  # Login a user, returning the token and user information
-  login(email: String!, password: String!): Auth
-
-  # Register a new user and return the token and user information
-  addUser(username: String!, email: String!, password: String!): Auth
-
-  # Save a book to the user's savedBooks list and return the updated User
-  saveBook(bookData: BookInput!): User
-
-  # Remove a book from the user's savedBooks list and return the updated User
-  removeBook(bookId: String!): User
-}
-
-
-  # Book Input Type (used in mutations like saveBook)
   ${bookInputType}
 `;

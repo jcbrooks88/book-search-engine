@@ -9,13 +9,31 @@ export interface JwtPayload {
   email: string;
 }
 
-const secretKey = process.env.JWT_SECRET_KEY || '';
+// Ensure secret key is loaded
+const secretKey = process.env.JWT_SECRET_KEY;
+if (!secretKey) {
+  throw new Error('Missing JWT_SECRET_KEY in environment variables.');
+}
+
+// Extend Express Request type to include user property
+declare module 'express' {
+  interface Request {
+    user?: JwtPayload;
+  }
+}
 
 // Function to get user from the token
 export const getUserFromToken = (authHeader?: string): JwtPayload | null => {
-  if (!authHeader) return null;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    console.error('Invalid or missing Authorization header.');
+    return null;
+  }
 
   const token = authHeader.split(' ')[1];
+  if (!token) {
+    console.error('No token found in Authorization header.');
+    return null;
+  }
 
   try {
     const user = jwt.verify(token, secretKey) as JwtPayload;
@@ -26,8 +44,8 @@ export const getUserFromToken = (authHeader?: string): JwtPayload | null => {
   }
 };
 
-// Middleware function to authenticate the token with types for req, res, and next
-export const authenticateToken = (req: Request, res: Response, next: NextFunction): void => { // Added return type 'void'
+// Middleware function to authenticate the token
+export const authenticateToken = (req: Request, res: Response, next: NextFunction): void => {
   const authHeader = req.headers.authorization;
 
   const user = getUserFromToken(authHeader);
@@ -36,12 +54,12 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
     return;
   }
 
-  req.user = user;  // Attach the user to the request object
-  next();  // Continue to the next middleware or route handler
+  req.user = user; // Attach user to request object
+  next(); // Continue to the next middleware or route handler
 };
 
 // Function to sign a token
-export const signToken = (username: string, email: string, _id: unknown): string => { // Explicitly define return type
+export const signToken = (username: string, email: string, _id: unknown): string => {
   const payload = { username, email, _id };
   return jwt.sign(payload, secretKey, { expiresIn: '1h', algorithm: 'HS256' });
 };

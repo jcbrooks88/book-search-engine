@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import * as dotenv from 'dotenv';
+
 dotenv.config();
 
 const MONGODB_URI = process.env.MONGODB_URI;
@@ -10,10 +11,10 @@ if (!MONGODB_URI) {
 
 console.log(`🔄 Attempting to connect to MongoDB at: ${MONGODB_URI}`);
 
-mongoose.connect(MONGODB_URI, {
-  useNewUrlParser: true,
-  
-} as mongoose.ConnectOptions);
+mongoose.connect(MONGODB_URI).catch((err) => {
+  console.error('❌ MongoDB connection error:', err);
+  process.exit(1);
+});
 
 const db = mongoose.connection;
 
@@ -27,7 +28,6 @@ db.on('connected', () => {
 
 db.on('error', (err) => {
   console.error('❌ MongoDB connection error:', err);
-  process.exit(1);
 });
 
 db.on('disconnected', () => {

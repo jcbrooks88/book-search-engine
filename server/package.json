@@ -7,12 +7,11 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
-    "watch": "concurrently \"tsc -w\" \"nodemon dist/server.js\""
+    "watch": "nodemon dist/server.js"
   },
   "dependencies": {
     "@apollo/server": "^4.11.3",
     "bcrypt": "^5.1.1",
-    "dotenv": "^16.4.7",
     "express": "^4.19.2",
     "graphql": "^16.10.0",
     "graphql-tag": "^2.12.6",
@@ -26,6 +25,8 @@
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^20.14.8",
     "nodemon": "^3.1.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "dotenv": "^16.4.7"
   }
 }
+
