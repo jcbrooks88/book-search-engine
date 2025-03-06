@@ -77,3 +77,6 @@ async function startServer() {
 startServer().catch((error) => {
   console.error("❌ Uncaught error:", error);
 });
+
+console.log("Starting server... File path:", __dirname);
+
